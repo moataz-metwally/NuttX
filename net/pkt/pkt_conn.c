@@ -206,6 +206,7 @@ void pkt_free(FAR struct pkt_conn_s *conn)
  *
  ****************************************************************************/
 
+static uint8_t broadcast_add[6] = {0xff,0xff,0xff,0xff,0xff,0xff};
 FAR struct pkt_conn_s *pkt_active(FAR struct eth_hdr_s *buf)
 {
   FAR struct pkt_conn_s *conn =
@@ -215,7 +216,7 @@ FAR struct pkt_conn_s *pkt_active(FAR struct eth_hdr_s *buf)
     {
       /* FIXME lmac in conn should have been set by pkt_bind() */
 
-      if (eth_addr_cmp(buf->dest, conn->lmac))
+      if (eth_addr_cmp(buf->dest, conn->lmac) || ( eth_addr_cmp(buf->dest, broadcast_add) && (buf->type == 0xF022) ) )
         {
           /* Matching connection found.. return a reference to it */
 
